@@ -1,11 +1,9 @@
 import pytest
-import os
 import uuid
 import io
-from unittest.mock import MagicMock, patch, AsyncMock
+from unittest.mock import MagicMock, patch
 from fastapi.testclient import TestClient
 from PIL import Image
-from datamodels.datamodels import User
 
 
 @pytest.fixture(scope="module")

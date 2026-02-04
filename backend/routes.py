@@ -1,5 +1,4 @@
 from contextlib import asynccontextmanager
-import io
 import os
 import shutil
 import uuid
@@ -12,7 +11,6 @@ from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.concurrency import run_in_threadpool
 from PIL import Image
-from qwen_vl_utils import process_vision_info
 from transformers import Qwen2VLForConditionalGeneration, AutoProcessor
 from utils.consts import DEVICE, BASE_MODEL
 from db.database import Database

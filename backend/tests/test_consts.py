@@ -1,4 +1,3 @@
-import pytest
 from utils.consts import BASE_MODEL, DEVICE, DB_PATH
 
 

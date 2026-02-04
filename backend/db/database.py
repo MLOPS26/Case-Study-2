@@ -1,8 +1,7 @@
 import duckdb
 import uuid
 from datetime import datetime
-from typing import List, Optional
-import sys
+from typing import Optional
 import os
 
 from utils.consts import DB_PATH
