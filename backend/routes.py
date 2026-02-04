@@ -1,76 +1,137 @@
 from contextlib import asynccontextmanager
 import io
-from fastapi import FastAPI, UploadFile, File, Form
+import os
+import shutil
+import uuid
+import sys
+
+# Add current directory to sys.path to ensure local imports work
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
+from fastapi import FastAPI, UploadFile, File, Form, HTTPException
+from fastapi.staticfiles import StaticFiles
 from fastapi.concurrency import run_in_threadpool
 from PIL import Image
 from qwen_vl_utils import process_vision_info
 from transformers import Qwen2VLForConditionalGeneration, AutoProcessor
 from utils.consts import DEVICE, BASE_MODEL
+from db.database import Database
+from datamodels.datamodels import User as UserModel
+from local_model import query_local
+
+# Global variables
+model = None
+processor = None
+device = None
+db = Database()
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global model, processor, device
+
+    # Initialize DB
+    db.initialize_db()
+
+    # Initialize Model
     model = Qwen2VLForConditionalGeneration.from_pretrained(BASE_MODEL)
     model.to(DEVICE)
     processor = AutoProcessor.from_pretrained(BASE_MODEL)
+    device = DEVICE  # explicitly set global device
+
     yield
+
     model = None
     processor = None
     device = None
+    db.close()
 
-app = FastAPI(lifespan = lifespan)
 
-@app.get('/device')
+app = FastAPI(lifespan=lifespan)
+
+# Mount uploads directory for serving images
+os.makedirs("uploads", exist_ok=True)
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+
+
+@app.get("/device")
 async def get_device():
-    print(globals)
-    return {'device': device}
+    return {"device": device}
 
 
-@app.post('/inference')
-async def inference(question: str = Form(...), file: UploadFile = File(...)):
-    content = await file.read()
-    img = Image.open(io.BytesIO(content))
+@app.post("/users")
+async def create_user(email: str = Form(...)):
+    # Generate a UUID if one isn't provided (or could accept one)
+    # Using email as unique constraint
+    new_uuid = str(uuid.uuid4())
+    user = UserModel(uuid=new_uuid, email=email)
+    if db.add_user(user):
+        return {"uuid": user.uuid, "email": user.email}
+    else:
+        # Return existing user or error - for now just return uuid
+        existing_user = db.con.execute(
+            "SELECT uuid, email FROM users WHERE email = ?", (email,)
+        ).fetchone()
+        if existing_user:
+            return {"uuid": existing_user[0], "email": existing_user[1]}
+        return {"error": "User with this email may already exist", "uuid": new_uuid}
 
-    
-    messages = [
-            {
-                "role": "user",
-                "content": [
-                    {"type": "image", "image": img},
-                    {"type": "text", "text": question},
-                ],
-            }
-        ]
+
+@app.get("/history/{user_uuid}")
+async def get_history(user_uuid: str):
+    return db.get_user_history(user_uuid)
+
+
+@app.post("/inference")
+async def inference(
+    question: str = Form(...), user_uuid: str = Form(...), file: UploadFile = File(...)
+):
+    # 1. Save the file locally
+    file_ext = file.filename.split(".")[-1] if "." in file.filename else "jpg"
+    file_name = f"{uuid.uuid4()}.{file_ext}"
+    file_path = os.path.join("uploads", file_name)
 
     try:
-        if processor and model in globals():
-
-            text = processor.apply_chat_template(
-                messages, tokenize=False, add_generation_prompt=True
-            )
-            images, video_inputs = process_vision_info(messages)
-
-            inputs = processor(
-                text=text, images=images, videos=video_inputs, padding=True, return_tensors="pt"
-            )
- 
-            inputs = inputs.to(device)
-
-
-            generated_ids = await run_in_threadpool(
-                        model.generate, **inputs, max_new_tokens=256
-                    )
-
-            generated_ids_trimmed = [
-                        out_ids[len(in_ids) :]
-                        for in_ids, out_ids in zip(inputs.input_ids, generated_ids)
-                    ]
-
-            output_text = processor.batch_decode(
-                        generated_ids_trimmed,
-                        skip_special_tokens=True,
-                        clean_up_tokenization_spaces=False,
-                    )
-            return {"response": output_text[0]} 
+        with open(file_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
     except Exception as e:
-        raise ValueError(f"Missing processor or model  in globs, error: {e}") 
+        raise HTTPException(status_code=500, detail=f"Failed to save image: {e}")
+
+    # 2. Open image for inference
+    try:
+        img = Image.open(file_path)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Invalid image file: {e}")
+
+    try:
+        if processor is not None and model is not None:
+            # Use the refactored local_model.query_local function
+            # Note: query_local is synchronous but runs in threadpool to avoid blocking
+            response_content = await run_in_threadpool(
+                query_local,
+                model=model,
+                processor=processor,
+                device=device,
+                image=img,
+                question=question,
+            )
+
+            # 3. Save to History
+            try:
+                # Ensure user exists (auto-create for demo/prototype smoothness if needed, or error)
+                user = db.get_user(user_uuid)
+                if not user:
+                    # For now just pass, assuming valid UUID from frontend or previous /users call
+                    pass
+
+                db.add_history_entry(user_uuid, question, response_content, file_path)
+            except Exception as db_e:
+                print(f"Failed to save history: {db_e}")
+
+            return {"response": response_content}
+        else:
+            raise HTTPException(status_code=500, detail="Model not initialized")
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Inference error: {e}")
