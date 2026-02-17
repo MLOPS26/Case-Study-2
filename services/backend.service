@@ -1,0 +1,14 @@
+[Unit]
+Description=Case Study 2 Backend
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu/Case-Study-2/backend
+ExecStart=/home/ubuntu/.local/bin/uv run fastapi run routes.py --host 0.0.0.0 --port 8000
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
