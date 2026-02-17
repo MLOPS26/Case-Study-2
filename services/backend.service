@@ -4,9 +4,9 @@ After=network.target
 
 [Service]
 Type=simple
-User=ubuntu
-WorkingDirectory=/home/ubuntu/Case-Study-2/backend
-ExecStart=/home/ubuntu/.local/bin/uv run fastapi run routes.py --host 0.0.0.0 --port 8000
+User=group09
+WorkingDirectory=/home/group09/Case-Study-2/backend
+ExecStart=/home/group09/.local/bin/uv run fastapi run routes.py --host 0.0.0.0 --port 8000
 Restart=always
 RestartSec=5
 

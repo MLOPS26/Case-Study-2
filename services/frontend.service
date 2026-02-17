@@ -4,10 +4,10 @@ After=network.target
 
 [Service]
 Type=simple
-User=ubuntu
-WorkingDirectory=/home/ubuntu/Case-Study-2/shrug-intelligence
-ExecStartPre=/home/ubuntu/.bun/bin/bun run build
-ExecStart=/home/ubuntu/.bun/bin/bun run start
+User=group09
+WorkingDirectory=/home/group09/Case-Study-2/shrug-intelligence
+ExecStartPre=/home/group09/.bun/bin/bun run build
+ExecStart=/home/group09/.bun/bin/bun run start
 Restart=always
 RestartSec=5
 
