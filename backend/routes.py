@@ -2,17 +2,15 @@ from contextlib import asynccontextmanager
 import os
 import shutil
 import uuid
-
-
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.concurrency import run_in_threadpool
 from PIL import Image
 from transformers import Qwen2VLForConditionalGeneration, AutoProcessor
-from utils.consts import DEVICE, BASE_MODEL
-from db.database import Database
-from datamodels.datamodels import User as UserModel
-from local_model import query_local
+from backend.utils.consts import DEVICE, BASE_MODEL
+from backend.db.database import Database
+from backend.datamodels.datamodels import User as UserModel
+from backend.local_model import query_local
 
 model = None
 processor = None

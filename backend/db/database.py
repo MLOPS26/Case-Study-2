@@ -4,8 +4,8 @@ from datetime import datetime
 from typing import Optional
 import os
 
-from utils.consts import DB_PATH
-from datamodels.datamodels import User
+from backend.utils.consts import DB_PATH
+from backend.datamodels.datamodels import User
 
 
 class Database:
@@ -19,7 +19,6 @@ class Database:
         self.con = duckdb.connect(self.db_path)
 
     def close(self):
-        """Closes the database connection."""
         if self.con:
             self.con.close()
             self.con = None
@@ -49,7 +48,6 @@ class Database:
         """)
 
     def add_user(self, user: User):
-        """Adds a new user to the database."""
         if not self.con:
             self.connect()
 
@@ -65,7 +63,6 @@ class Database:
             return False
 
     def get_user(self, user_uuid: str) -> Optional[User]:
-        """Retrieves a user by UUID."""
         if not self.con:
             self.connect()
 
@@ -87,7 +84,6 @@ class Database:
         response: str,
         image_url: Optional[str] = None,
     ):
-        """Adds a new interaction to the history."""
         if not self.con:
             self.connect()
 
