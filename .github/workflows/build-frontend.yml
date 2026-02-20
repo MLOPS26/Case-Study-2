@@ -1,0 +1,31 @@
+name: build frontend
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'shrug-intelligence/**'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+
+      - run: bun install
+        working-directory: shrug-intelligence
+
+      - run: bun run build
+        working-directory: shrug-intelligence
+
+      - run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add shrug-intelligence/.next
+          git commit -m "chore: build frontend [skip ci]" || true
+          git push
