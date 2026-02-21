@@ -3,7 +3,7 @@
 # clear the shared key
 ssh-keygen -f ~/.ssh/known_hosts -R "[paffenroth-23.dyn.wpi.edu]:22000"
 
-ssh -p 22000 group09@paffenroth-23.dyn.wpi.edu << EOF
+ssh -i group_key -p 22000 group09@paffenroth-23.dyn.wpi.edu << EOF
 
 # wipe and rebuild authorized_keys with only our keys
 > ~/.ssh/authorized_keys

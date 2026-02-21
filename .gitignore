@@ -211,3 +211,6 @@ uploads/
 # db specifics
 *.duckdb
 *.wal
+
+group_key
+group_key.pub
