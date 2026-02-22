@@ -1,4 +1,3 @@
-group09@frontend:~/Case-Study-2$ cat frontend_deploy.sh
 #!/bin/bash
 
 # clear the shared key
@@ -14,6 +13,14 @@ sudo tar -C /opt -xzf nvim-linux-x86_64.tar.gz
 
 # append to bashrc
 >> export PATH="$PATH:/opt/nvim-linux-x86_64/bin" ~/.bashrc
+
+
+# source out bashrc
+source ~/.bashrc
+
+#clone nvim config to config folder
+git clone https://github.com/afrenkai/konfig.git ~/.config/nvim/
+
 
 # wipe and rebuild authorized_keys with only our keys
 > ~/.ssh/authorized_keys
