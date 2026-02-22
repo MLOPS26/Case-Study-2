@@ -100,7 +100,7 @@ self.__SERVER_FILES_MANIFEST={
         "transform": "lodash/{{member}}"
       }
     },
-    "outputFileTracingRoot": "/Users/connorjason",
+    "outputFileTracingRoot": "/home/runner/work/Case-Study-2/Case-Study-2/shrug-intelligence",
     "cacheComponents": false,
     "cacheLife": {
       "default": {
@@ -157,7 +157,7 @@ self.__SERVER_FILES_MANIFEST={
       "proxyPrefetch": "flexible",
       "optimisticClientCache": true,
       "manualClientBasePath": false,
-      "cpus": 7,
+      "cpus": 3,
       "memoryBasedWorkersCount": false,
       "imgOptConcurrency": null,
       "imgOptTimeoutInSeconds": 7,
@@ -294,12 +294,12 @@ self.__SERVER_FILES_MANIFEST={
     "configFileName": "next.config.ts",
     "reactCompiler": true,
     "turbopack": {
-      "root": "/Users/connorjason"
+      "root": "/home/runner/work/Case-Study-2/Case-Study-2/shrug-intelligence"
     },
     "distDirRoot": ".next"
   },
-  "appDir": "/Users/connorjason/VSCProjects/Case-Study-2/shrug-intelligence",
-  "relativeAppDir": "VSCProjects/Case-Study-2/shrug-intelligence",
+  "appDir": "/home/runner/work/Case-Study-2/Case-Study-2/shrug-intelligence",
+  "relativeAppDir": "",
   "files": [
     ".next/routes-manifest.json",
     ".next/server/pages-manifest.json",
