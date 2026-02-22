@@ -1,5 +1,7 @@
 #!/bin/bash
 
+chmod 600 group_key
+
 # clear the shared key
 ssh-keygen -f ~/.ssh/known_hosts -R "[paffenroth-23.dyn.wpi.edu]:22009"
 
@@ -16,6 +18,7 @@ chmod 600 ~/.ssh/authorized_keys
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # clone repo
+rm -rf ~/Case-Study-2
 git clone https://github.com/MLOPS26/Case-Study-2.git ~/Case-Study-2
 
 # install deps
