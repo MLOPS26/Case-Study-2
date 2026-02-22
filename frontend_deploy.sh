@@ -1,22 +1,33 @@
 #!/bin/bash
 
-export PORT=7009
-export MACHINE=paffenroth-23.dyn.wpi.edu
+# clear the shared key
+ssh-keygen -f ~/.ssh/known_hosts -R "[paffenroth-23.dyn.wpi.edu]:22000"
 
+ssh -i group_key -p 22000 group09@paffenroth-23.dyn.wpi.edu << EOF
 
-#killing old runs
-ssh-keygen -f "~/.ssh/known_hosts" -R "[paffenroth-23.dyn.wpi.edu]:21009"
-rm -rf tmp
-
-#temp dir
-mkdir tmp
-
-
-cat ARTEM_KEY >> ~/.ssh/authorized_keys
-cat CONNOR_KEY >> ~/.ssh/authorized_keys
-cat KARISH_KEY >> ~/.ssh/authorized_keys
-
+# wipe and rebuild authorized_keys with only our keys
+> ~/.ssh/authorized_keys
+echo "$(cat ARTEM_KEY)" >> ~/.ssh/authorized_keys
+echo "$(cat CONNOR_KEY)" >> ~/.ssh/authorized_keys
+echo "$(cat KARISH_KEY)" >> ~/.ssh/authorized_keys
 chmod 600 ~/.ssh/authorized_keys
 
-ls -l ~/.ssh/authorized_keys
+# install bun
+curl -fsSL https://bun.sh/install | bash
 
+# clone repo
+git clone https://github.com/MLOPS26/Case-Study-2.git ~/Case-Study-2
+
+# install prod deps only
+cd ~/Case-Study-2/shrug-intelligence
+~/.bun/bin/bun install --production
+
+# deploy service
+sudo cp ~/Case-Study-2/services/frontend.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now frontend
+
+# watchdog cron
+sudo bash ~/Case-Study-2/services/add-cron-frontend.sh
+
+EOF

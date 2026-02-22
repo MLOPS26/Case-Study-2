@@ -1,0 +1,3 @@
+module.exports=[24106,(a,b,c)=>{let{createClientModuleProxy:d}=a.r(42601);a.n(d("[project]/VSCProjects/Case-Study-2/shrug-intelligence/node_modules/next/dist/client/components/builtin/global-error.js <module evaluation>"))},38827,(a,b,c)=>{let{createClientModuleProxy:d}=a.r(42601);a.n(d("[project]/VSCProjects/Case-Study-2/shrug-intelligence/node_modules/next/dist/client/components/builtin/global-error.js"))},79596,a=>{"use strict";a.i(24106);var b=a.i(38827);a.n(b)}];
+
+//# sourceMappingURL=c36d1_next_dist_client_components_builtin_global-error_936f3ff8.js.map

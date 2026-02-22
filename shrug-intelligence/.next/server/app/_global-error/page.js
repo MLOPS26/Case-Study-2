@@ -1,0 +1,11 @@
+var R=require("../../chunks/ssr/[turbopack]_runtime.js")("server/app/_global-error/page.js")
+R.c("server/chunks/ssr/[root-of-the-server]__4b5b721b._.js")
+R.c("server/chunks/ssr/VSCProjects_Case-Study-2_shrug-intelligence_0498f81f._.js")
+R.c("server/chunks/ssr/c36d1_next_dist_98ea602b._.js")
+R.c("server/chunks/ssr/[root-of-the-server]__31ab9281._.js")
+R.c("server/chunks/ssr/[root-of-the-server]__e8616e1c._.js")
+R.c("server/chunks/ssr/c36d1_next_dist_c952e9f3._.js")
+R.c("server/chunks/ssr/VSCProjects_Case-Study-2_shrug-intelligence_app_3d5f8dbc._.js")
+R.c("server/chunks/ssr/4872c__next-internal_server_app__global-error_page_actions_0e1a628e.js")
+R.m(61808)
+module.exports=R.m(61808).exports

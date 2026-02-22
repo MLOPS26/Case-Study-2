@@ -7,7 +7,6 @@ Type=simple
 User=group09
 WorkingDirectory=/home/group09/Case-Study-2/shrug-intelligence
 Environment=PORT=7009
-ExecStartPre=/home/group09/.bun/bin/bun run build
 ExecStart=/home/group09/.bun/bin/bun run start
 Restart=always
 RestartSec=5
