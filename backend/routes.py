@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.concurrency import run_in_threadpool
 from PIL import Image
-from transformers import Qwen2VLForConditionalGeneration, AutoProcessor, BitsAndBytesConfig
+from transformers import Qwen2VLForConditionalGeneration, AutoProcessor
 from backend.utils.consts import DEVICE, BASE_MODEL
 from backend.db.database import Database
 from backend.datamodels.datamodels import User as UserModel
@@ -34,13 +34,7 @@ async def lifespan(app: FastAPI):
     db.initialize_db()
 
     # Local model setup
-    quant_config = BitsAndBytesConfig(
-        load_in_4bit=True,
-        bnb_4bit_quant_type="nf4",
-        bnb_4bit_compute_dtype="float16",
-        bnb_4bit_use_double_quant=True
-    )
-    model = Qwen2VLForConditionalGeneration.from_pretrained(BASE_MODEL, quantization_config=quant_config)
+    model = Qwen2VLForConditionalGeneration.from_pretrained(BASE_MODEL)
     model.to(DEVICE)
     processor = AutoProcessor.from_pretrained(BASE_MODEL)
     device = DEVICE 
@@ -117,13 +111,12 @@ async def inference(
                     question=question,
                 )
         elif mode == "remote":
-            if processor is not None and model is not None:
-                response_content = await run_in_threadpool(
-                    query_remote,
-                    image=img,
-                    question=question,
-                    client=client
-                )
+            response_content = await run_in_threadpool(
+                query_remote,
+                image=img,
+                question=question,
+                client=client
+            )
         else: 
             raise HTTPException(status_code=400, detail="Invalid mode. Choose 'local' or 'remote'.")
 

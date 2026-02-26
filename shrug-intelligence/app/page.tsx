@@ -14,9 +14,18 @@ export default function Home() {
   const [view, setView] = useState<"main" | "history">("main");
   const [mode, setMode] = useState<"local" | "remote">("local");
 
-  // should throw this somewhere else
-  const BACKEND_URL =
-    process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
+  const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
+
+  // Reset form
+  const handleClear = () => {
+    setQuestion("");
+    setFile(null);
+    setImagePreview(null);
+    setResponse("");
+    // Reset file input manually if needed
+    const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+    if (fileInput) fileInput.value = "";
+  };
 
   const handleCreateUser = async () => {
     if (!email) return;
@@ -68,14 +77,10 @@ export default function Home() {
 
       const data = await res.json();
       setResponse(data.response);
-      setQuestion("");
-      setFile(null);
-      setImagePreview(null);
     } catch (error) {
       console.error("Error:", error);
       setResponse("Error processing request");
     }
-
     setLoading(false);
   };
 
@@ -130,12 +135,20 @@ export default function Home() {
               <p className="font-mono text-sm">
                 user: {userUuid.substring(0, 8)}...
               </p>
-              <button
-                onClick={handleLoadHistory}
-                className="px-4 py-1 border-2 border-black font-mono hover:bg-black hover:text-white"
-              >
-                HISTORY
-              </button>
+              <div className="flex gap-2">
+                <button
+                  onClick={handleClear}
+                  className="px-4 py-1 border-2 border-black font-mono text-sm hover:bg-red-500 hover:text-white transition-colors"
+                >
+                  NEW
+                </button>
+                <button
+                  onClick={handleLoadHistory}
+                  className="px-4 py-1 border-2 border-black font-mono text-sm hover:bg-black hover:text-white transition-colors"
+                >
+                  HISTORY
+                </button>
+              </div>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -149,19 +162,13 @@ export default function Home() {
                 />
                 {imagePreview && (
                   <div className="mt-4 border-2 border-black p-4">
-                    <img
-                      src={imagePreview}
-                      alt="Preview"
-                      className="max-w-full h-auto"
-                    />
+                    <img src={imagePreview} alt="Preview" className="max-w-full h-auto" />
                   </div>
                 )}
               </div>
 
               <div className="border-2 border-black p-8">
-                <label className="block font-mono font-bold mb-4">
-                  QUESTION
-                </label>
+                <label className="block font-mono font-bold mb-4">QUESTION</label>
                 <textarea
                   value={question}
                   onChange={(e) => setQuestion(e.target.value)}
@@ -170,7 +177,7 @@ export default function Home() {
                 />
               </div>
 
-              <div className="border-2 border-black p-4 mb-6 flex items-center justify-between font-mono">
+              <div className="border-2 border-black p-4 mb-6 flex items-center justify-between font-mono bg-gray-50">
                 <span className="font-bold text-sm">BRAIN:</span>
                 <div className="flex gap-2">
                   <button
@@ -200,7 +207,7 @@ export default function Home() {
             </form>
 
             {response && (
-              <div className="mt-8 border-2 border-black p-8">
+              <div className="mt-8 border-2 border-black p-8 bg-yellow-50">
                 <h3 className="font-mono font-bold mb-4">RESPONSE</h3>
                 <div className="font-mono whitespace-pre-wrap">{response}</div>
               </div>
@@ -231,10 +238,10 @@ export default function Home() {
                     <div className="font-mono text-sm mb-2 opacity-60">
                       {new Date(item.timestamp).toLocaleString()}
                     </div>
-                    {item.image_path && (
+                    {item.image_url && (
                       <div className="mb-4 border-2 border-black p-2">
                         <img
-                          src={`${BACKEND_URL}/${item.image_path}`}
+                          src={`${BACKEND_URL}/${item.image_url}`}
                           alt="Question"
                           className="max-w-full h-auto"
                         />
