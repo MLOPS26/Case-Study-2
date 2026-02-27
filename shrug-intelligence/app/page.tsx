@@ -1,35 +1,46 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
+import { useState } from "react";
 
 export default function Home() {
-  const [email, setEmail] = useState('');
-  const [userUuid, setUserUuid] = useState('');
-  const [question, setQuestion] = useState('');
+  const [email, setEmail] = useState("");
+  const [userUuid, setUserUuid] = useState("");
+  const [question, setQuestion] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [response, setResponse] = useState('');
+  const [response, setResponse] = useState("");
   const [history, setHistory] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
-  const [view, setView] = useState<'main' | 'history'>('main');
+  const [view, setView] = useState<"main" | "history">("main");
+  const [mode, setMode] = useState<"local" | "remote">("local");
 
-// should throw this somewhere else
-  const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
+  const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
+
+  // Reset form
+  const handleClear = () => {
+    setQuestion("");
+    setFile(null);
+    setImagePreview(null);
+    setResponse("");
+    // Reset file input manually if needed
+    const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+    if (fileInput) fileInput.value = "";
+  };
 
   const handleCreateUser = async () => {
     if (!email) return;
     setLoading(true);
     try {
       const formData = new FormData();
-      formData.append('email', email);
+      formData.append("email", email);
       const res = await fetch(`${BACKEND_URL}/users`, {
-        method: 'POST',
+        method: "POST",
         body: formData,
       });
       const data = await res.json();
       setUserUuid(data.uuid);
     } catch (error) {
-      console.error('Error creating user:', error);
+      console.error("Error creating user:", error);
     }
     setLoading(false);
   };
@@ -51,29 +62,25 @@ export default function Home() {
     if (!file || !question || !userUuid) return;
 
     setLoading(true);
-    setResponse('');
+    setResponse("");
 
     try {
       const formData = new FormData();
-      formData.append('file', file);
-      formData.append('question', question);
-      formData.append('user_uuid', userUuid);
-
+      formData.append("file", file);
+      formData.append("question", question);
+      formData.append("user_uuid", userUuid);
+      formData.append("mode", mode);
       const res = await fetch(`${BACKEND_URL}/inference`, {
-        method: 'POST',
+        method: "POST",
         body: formData,
       });
 
       const data = await res.json();
       setResponse(data.response);
-      setQuestion('');
-      setFile(null);
-      setImagePreview(null);
     } catch (error) {
-      console.error('Error:', error);
-      setResponse('Error processing request');
+      console.error("Error:", error);
+      setResponse("Error processing request");
     }
-
     setLoading(false);
   };
 
@@ -84,9 +91,9 @@ export default function Home() {
       const res = await fetch(`${BACKEND_URL}/history/${userUuid}`);
       const data = await res.json();
       setHistory(data);
-      setView('history');
+      setView("history");
     } catch (error) {
-      console.error('Error loading history:', error);
+      console.error("Error loading history:", error);
     }
     setLoading(false);
   };
@@ -116,22 +123,32 @@ export default function Home() {
                 disabled={loading || !email}
                 className="px-6 py-2 bg-black text-white font-mono hover:bg-gray-800 disabled:bg-gray-400"
               >
-                {loading ? '...' : 'GO'}
+                {loading ? "..." : "GO"}
               </button>
             </div>
           </div>
         )}
 
-        {userUuid && view === 'main' && (
+        {userUuid && view === "main" && (
           <>
             <div className="mb-4 flex justify-between items-center border-b-2 border-black pb-4">
-              <p className="font-mono text-sm">user: {userUuid.substring(0, 8)}...</p>
-              <button
-                onClick={handleLoadHistory}
-                className="px-4 py-1 border-2 border-black font-mono hover:bg-black hover:text-white"
-              >
-                HISTORY
-              </button>
+              <p className="font-mono text-sm">
+                user: {userUuid.substring(0, 8)}...
+              </p>
+              <div className="flex gap-2">
+                <button
+                  onClick={handleClear}
+                  className="px-4 py-1 border-2 border-black font-mono text-sm hover:bg-red-500 hover:text-white transition-colors"
+                >
+                  NEW
+                </button>
+                <button
+                  onClick={handleLoadHistory}
+                  className="px-4 py-1 border-2 border-black font-mono text-sm hover:bg-black hover:text-white transition-colors"
+                >
+                  HISTORY
+                </button>
+              </div>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -160,17 +177,37 @@ export default function Home() {
                 />
               </div>
 
+              <div className="border-2 border-black p-4 mb-6 flex items-center justify-between font-mono bg-gray-50">
+                <span className="font-bold text-sm">BRAIN:</span>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setMode("local")}
+                    className={`px-3 py-1 border-2 border-black text-xs ${mode === "local" ? "bg-black text-white" : "bg-white"}`}
+                  >
+                    LOCAL (GPU)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setMode("remote")}
+                    className={`px-3 py-1 border-2 border-black text-xs ${mode === "remote" ? "bg-black text-white" : "bg-white"}`}
+                  >
+                    REMOTE (API)
+                  </button>
+                </div>
+              </div>
+
               <button
                 type="submit"
                 disabled={loading || !file || !question}
                 className="w-full py-4 bg-black text-white font-mono text-xl hover:bg-gray-800 disabled:bg-gray-400"
               >
-                {loading ? 'THINKING...' : 'SOLVE'}
+                {loading ? "THINKING..." : "SOLVE"}
               </button>
             </form>
 
             {response && (
-              <div className="mt-8 border-2 border-black p-8">
+              <div className="mt-8 border-2 border-black p-8 bg-yellow-50">
                 <h3 className="font-mono font-bold mb-4">RESPONSE</h3>
                 <div className="font-mono whitespace-pre-wrap">{response}</div>
               </div>
@@ -178,12 +215,12 @@ export default function Home() {
           </>
         )}
 
-        {userUuid && view === 'history' && (
+        {userUuid && view === "history" && (
           <>
             <div className="mb-4 flex justify-between items-center border-b-2 border-black pb-4">
               <h3 className="font-mono font-bold text-xl">HISTORY</h3>
               <button
-                onClick={() => setView('main')}
+                onClick={() => setView("main")}
                 className="px-4 py-1 border-2 border-black font-mono hover:bg-black hover:text-white"
               >
                 BACK
@@ -201,10 +238,10 @@ export default function Home() {
                     <div className="font-mono text-sm mb-2 opacity-60">
                       {new Date(item.timestamp).toLocaleString()}
                     </div>
-                    {item.image_path && (
+                    {item.image_url && (
                       <div className="mb-4 border-2 border-black p-2">
                         <img
-                          src={`${BACKEND_URL}/${item.image_path}`}
+                          src={`${BACKEND_URL}/${item.image_url}`}
                           alt="Question"
                           className="max-w-full h-auto"
                         />

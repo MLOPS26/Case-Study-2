@@ -7,6 +7,10 @@
 - `uv run db.database`: populates database (WIP)
 - `uv run fastapi dev routes`: runs localhost routes
 
+`Windows Local Backend` 
+- python -m backend.db.database
+- python -m uvicorn backend.routes:app --reload --port 8000
+
 
 `shrug-intelligence`
 - `bun run dev`

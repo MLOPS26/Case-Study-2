@@ -12,12 +12,20 @@ from backend.utils.consts import DEVICE, BASE_MODEL
 from backend.db.database import Database
 from backend.datamodels.datamodels import User as UserModel
 from backend.local_model import query_local
+from backend.remote_model import query_remote
+from huggingface_hub import InferenceClient
 
+# Local model setup
 model = None
 processor = None
 device = None
-db = Database()
 
+# Remote model setup
+remote_model="zai-org/GLM-4.5V"
+client = InferenceClient(model=remote_model)
+
+# DB setup
+db = Database()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -25,6 +33,7 @@ async def lifespan(app: FastAPI):
 
     db.initialize_db()
 
+    # Local model setup
     model = Qwen2VLForConditionalGeneration.from_pretrained(BASE_MODEL)
     model.to(DEVICE)
     processor = AutoProcessor.from_pretrained(BASE_MODEL)
@@ -73,7 +82,7 @@ async def get_history(user_uuid: str):
 
 @app.post("/inference")
 async def inference(
-    question: str = Form(...), user_uuid: str = Form(...), file: UploadFile = File(...)
+    question: str = Form(...), user_uuid: str = Form(...), file: UploadFile = File(...), mode: str = Form(...)
 ):
     file_ext = file.filename.split(".")[-1] if "." in file.filename else "jpg"
     file_name = f"{uuid.uuid4()}.{file_ext}"
@@ -91,30 +100,37 @@ async def inference(
         raise HTTPException(status_code=400, detail=f"Invalid image file: {e}")
 
     try:
-        if processor is not None and model is not None:
+        if mode == "local":
+            if processor is not None and model is not None:
+                response_content = await run_in_threadpool(
+                    query_local,
+                    model=model,
+                    processor=processor,
+                    device=device,
+                    image=img,
+                    question=question,
+                )
+        elif mode == "remote":
             response_content = await run_in_threadpool(
-                query_local,
-                model=model,
-                processor=processor,
-                device=device,
+                query_remote,
                 image=img,
                 question=question,
+                client=client
             )
+        else: 
+            raise HTTPException(status_code=400, detail="Invalid mode. Choose 'local' or 'remote'.")
 
-            try:
-                user = db.get_user(user_uuid)
-                if not user:
-                    #TODO: handle what if no uuid
-                    pass
+        try:
+            user = db.get_user(user_uuid)
+            if not user:
+                #TODO: handle what if no uuid
+                pass
 
-                db.add_history_entry(user_uuid, question, response_content, file_path)
-            except Exception as db_e:
-                print(f"Failed to save history: {db_e}")
+            db.add_history_entry(user_uuid, question, response_content, file_path)
+        except Exception as db_e:
+            print(f"Failed to save history: {db_e}")
 
-            return {"response": response_content}
-        else:
-            raise HTTPException(status_code=500, detail="Model not initialized")
-    except HTTPException:
-        raise
+        return {"response": response_content}
+    
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Inference error: {e}")
