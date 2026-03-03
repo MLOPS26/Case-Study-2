@@ -12,6 +12,8 @@ def query_remote(image: Image.Image, question: str, client: InferenceClient):
         raise ValueError("Missing image")
 
     buffered = BytesIO()
+    if image.mode != "RGB":
+        image = image.convert("RGB")
     image.save(buffered, format="JPEG")
     img_str = base64.b64encode(buffered.getvalue()).decode("utf-8")
     image_url = f"data:image/jpeg;base64,{img_str}"
