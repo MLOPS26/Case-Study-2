@@ -22,7 +22,7 @@ device = None
 
 # Remote model setup
 remote_model="zai-org/GLM-4.5V"
-client = InferenceClient(model=remote_model)
+client = InferenceClient(model=remote_model, token=os.environ.get("HF_TOKEN"))
 
 # DB setup
 db = Database()
