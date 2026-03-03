@@ -22,6 +22,8 @@ jobs:
 
       - run: bun run build
         working-directory: shrug-intelligence
+        env:
+          NEXT_PUBLIC_BACKEND_URL: http://paffenroth-23.dyn.wpi.edu:9009
 
       - run: |
           git config user.name "github-actions"

@@ -14,7 +14,7 @@ export default function Home() {
   const [view, setView] = useState<"main" | "history">("main");
   const [mode, setMode] = useState<"local" | "remote">("local");
 
-  const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
+  const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
   // Reset form
   const handleClear = () => {
