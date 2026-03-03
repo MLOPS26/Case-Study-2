@@ -38,6 +38,11 @@ git clone https://github.com/MLOPS26/Case-Study-2.git ~/Case-Study-2
 cd ~/Case-Study-2
 ~/.local/bin/uv sync
 
+# HF setup
+echo "$(cat HF_TOKEN)" >> .env
+source .env
+uvx hf auth login --token $HF_TOKEN
+
 # deploy service
 sudo cp services/backend.service /etc/systemd/system/
 sudo systemctl daemon-reload
