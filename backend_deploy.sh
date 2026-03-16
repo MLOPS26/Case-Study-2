@@ -12,7 +12,7 @@ sudo rm -rf /opt/nvim-linux-x86_64
 sudo tar -C /opt -xzf nvim-linux-x86_64.tar.gz
 
 # append to bashrc
->> export PATH="$PATH:/opt/nvim-linux-x86_64/bin" ~/.bashrc
+echo 'export PATH="$PATH:/opt/nvim-linux-x86_64/bin"' >> ~/.bashrc
 
 # source out bashrc
 source ~/.bashrc
@@ -41,7 +41,7 @@ cd ~/Case-Study-2
 # HF setup
 echo "$(cat HF_TOKEN)" >> .env
 source .env
-uvx hf auth login --token $HF_TOKEN
+~/.local/bin/uvx hf auth login --token $HF_TOKEN
 
 # deploy service
 sudo cp services/backend.service /etc/systemd/system/
