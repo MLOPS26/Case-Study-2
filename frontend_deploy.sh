@@ -38,7 +38,7 @@ git clone https://github.com/MLOPS26/Case-Study-2.git ~/Case-Study-2
 
 # install prod deps only
 cd ~/Case-Study-2/shrug-intelligence
-~/.bun/bin/bun install --production
+~/.bun/bin/bun install
 
 # deploy service
 sudo cp ~/Case-Study-2/services/frontend.service /etc/systemd/system/
