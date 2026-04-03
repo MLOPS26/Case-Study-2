@@ -28,7 +28,7 @@ git switch docker
 sudo docker build -t cs3-backend -f backend/Dockerfile .
 
 # read HF_TOKEN
-HF_TOKEN=$(cat HF_TOKEN 2>/dev/null || echo "")
+HF_TOKEN=$(cat HF_TOKEN)
 
 # run the container
 sudo docker run -d --name cs3-backend --restart always -p 22092:22092 -e HF_TOKEN="$HF_TOKEN" -v cs3-backend-uploads:/opt/app/uploads -v cs3-backend-db:/opt/app/db cs3-backend
