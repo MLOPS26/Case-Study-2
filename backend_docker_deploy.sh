@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# clear the known hosts cache
-ssh-keygen -f ~/.ssh/known_hosts -R "[paffenroth-23.dyn.wpi.edu]:22000"
-
 # copy HF_TOKEN file to the VM
 scp -o StrictHostKeyChecking=no -i group_key -P 22000 HF_TOKEN group09@paffenroth-23.dyn.wpi.edu:~/Case-Study-2/HF_TOKEN
 
@@ -15,14 +12,12 @@ docker rm cs3-backend 2>/dev/null || true
 # clone or pull repo
 if [ -d ~/Case-Study-2 ]; then
     cd ~/Case-Study-2
+    git switch main
     git pull
 else
     git clone https://github.com/MLOPS26/Case-Study-2.git ~/Case-Study-2
     cd ~/Case-Study-2
 fi
-
-# remove after we merge to main
-git switch docker
 
 # build the backend image from repo root
 docker build -t cs3-backend -f backend/Dockerfile .
