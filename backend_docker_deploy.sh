@@ -2,7 +2,7 @@
 
 # copy HF_TOKEN file to the VM
 scp -o StrictHostKeyChecking=no -i group_key -P 22000 HF_TOKEN group09@paffenroth-23.dyn.wpi.edu:~/Case-Study-2/HF_TOKEN
-
+scp -o StrictHostKeyChecking=no -i group_key -P 22000 NGROK_AUTHTOKEN group09@paffenroth-23.dyn.wpi.edu:~/Case-Study-2/NGROK_AUTHTOKEN
 ssh -o StrictHostKeyChecking=no -i group_key -p 22000 group09@paffenroth-23.dyn.wpi.edu << 'EOF'
 
 # stop and remove old containers if they exist
@@ -29,6 +29,10 @@ docker build -t cs3-backend -f backend/Dockerfile .
 # read HF_TOKEN
 source HF_TOKEN
 
+#read NGROK_AUTHTOKEN
+source NGROK_AUTHTOKEN
+
+
 # run the backend container
 docker run -d --name cs3-backend --restart always -p 22092:22092 -e HF_TOKEN="$HF_TOKEN" -v cs3-backend-uploads:/opt/app/uploads -v cs3-backend-db:/opt/app/db cs3-backend
 echo "Backend container started!"
@@ -42,4 +46,6 @@ echo "Prometheus container started!"
 # VERIFY RUNNING CONTAINERS
 docker ps --filter name=cs3-backend --filter name=prometheus
 
+docker run --net=host -it -e NGROK_AUTHTOKEN="$NGROK_AUTHTOKEN" ngrok/ngrok:latest http --url=hedy-spriggier-shela.ngrok-free.dev 80
+ngrok http 80
 EOF
