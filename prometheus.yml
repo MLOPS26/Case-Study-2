@@ -1,19 +1,19 @@
 global:
-  scrape_interval:     15s # By default, scrape targets every 15 seconds.
-
-  # Attach these labels to any time series or alerts when communicating with
-  # external systems (federation, remote storage, Alertmanager).
+  scrape_interval: 15s
   external_labels:
     monitor: 'codelab-monitor'
 
-# A scrape configuration containing exactly one endpoint to scrape:
-# Here it's Prometheus itself.
 scrape_configs:
-  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+  # 1. Scrape Prometheus itself
   - job_name: 'prometheus'
-
-    # Override the global default and scrape targets from this job every 5 seconds.
     scrape_interval: 5s
-
     static_configs:
-      - targets: ['localhost:22094']
+      # Prometheus runs natively on 9090 inside its container
+      - targets: ['localhost:9090'] 
+
+  # 2. Scrape your FastAPI Backend
+  - job_name: 'cs3-backend'
+    scrape_interval: 5s
+    static_configs:
+      # Point this to your server and backend port
+      - targets: ['paffenroth-23.dyn.wpi.edu:22092']
