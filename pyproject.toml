@@ -9,6 +9,8 @@ dependencies = [
     "fastapi[standard]>=0.128.0",
     "httpx>=0.28.1",
     "pillow",
+    "prometheus-client>=0.24.1",
+    "prometheus-fastapi-instrumentator>=7.1.0",
     "pytest>=9.0.2",
     "pytest-asyncio>=1.3.0",
     "qwen-vl-utils>=0.0.14",
