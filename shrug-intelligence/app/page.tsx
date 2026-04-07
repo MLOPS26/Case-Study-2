@@ -15,7 +15,7 @@ export default function Home() {
   const [mode, setMode] = useState<"local" | "remote">("local");
 
   const BACKEND_URL = "https://cerebrational-lyman-cavate.ngrok-free.dev";
-
+  const NGROK_HEADERS = { "ngrok-skip-browser-warning": "true" };
   // Reset form
   const handleClear = () => {
     setQuestion("");
@@ -36,6 +36,7 @@ export default function Home() {
       const res = await fetch(`${BACKEND_URL}/users`, {
         method: "POST",
         body: formData,
+	headers: NGROK_HEADERS
       });
       const data = await res.json();
       setUserUuid(data.uuid);
@@ -73,6 +74,7 @@ export default function Home() {
       const res = await fetch(`${BACKEND_URL}/inference`, {
         method: "POST",
         body: formData,
+	headers: NGROK_HEADERS
       });
 
       const data = await res.json();
@@ -88,7 +90,9 @@ export default function Home() {
     if (!userUuid) return;
     setLoading(true);
     try {
-      const res = await fetch(`${BACKEND_URL}/history/${userUuid}`);
+      const res = await fetch(`${BACKEND_URL}/history/${userUuid}`, {
+				headers: NGROK_HEADERS
+			});
       const data = await res.json();
       setHistory(data);
       setView("history");

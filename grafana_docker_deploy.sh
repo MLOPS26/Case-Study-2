@@ -18,6 +18,7 @@ docker rm grafana 2>/dev/null || true
 docker stop ngrok-grafana 2>/dev/null || true
 docker rm ngrok-grafana 2>/dev/null || true
 
+
 # deploy grafana
 docker run -d --name grafana --restart always -p 22095:3000 -v ~/Case-Study-2/grafana/provisioning:/etc/grafana/provisioning:ro -v grafana-storage:/var/lib/grafana -e GF_SECURITY_ADMIN_USER=admin -e GF_SECURITY_ADMIN_PASSWORD=admin -e 'GF_SERVER_ROOT_URL=%(protocol)s://%(domain)s/' grafana/grafana-oss
 
