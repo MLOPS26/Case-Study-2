@@ -7,8 +7,9 @@ scp -o StrictHostKeyChecking=no -i group_key -P 22000 NGROK_AUTHTOKEN_GRAFANA gr
 ssh -o StrictHostKeyChecking=no -i group_key -p 22000 group09@paffenroth-23.dyn.wpi.edu << 'EOF'
 
 cd ~/Case-Study-2
-git switch main
 git stash
+git pull
+git switch main
 git pull
 
 # stop and remove old containers if they exist

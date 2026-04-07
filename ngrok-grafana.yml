@@ -1,6 +1,7 @@
 version: "2"
+web_addr: false
 tunnels:
   shrug-intelligence-grafana:
     proto: http
-    addr: http://paffenroth-23.dyn.wpi.edu:22095
-    domain: https://lai-unreverberating-disgustingly.ngrok-free.dev
+    addr: 22095
+    domain: lai-unreverberating-disgustingly.ngrok-free.dev
