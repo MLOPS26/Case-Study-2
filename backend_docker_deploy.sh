@@ -21,6 +21,19 @@ else
     cd ~/Case-Study-2
 fi
 
+# INFRASTRUCTURE SETUP (Node Exporter)
+echo "Installing and configuring Node Exporter..."
+# Update apt lists and install the package automatically
+sudo apt-get update
+sudo apt-get install -y prometheus-node-exporter
+
+# Ensure the service is enabled to start on boot and is currently running
+sudo systemctl enable --now prometheus-node-exporter
+
+# Output the status for your assignment screenshot/logs
+echo "Node Exporter Status:"
+systemctl status prometheus-node-exporter --no-pager | head -n 10
+
 # DEPLOY BACKEND
 
 # build the backend image from repo root
