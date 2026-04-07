@@ -30,18 +30,15 @@ else
     cd ~/Case-Study-2
 fi
 
-# INFRASTRUCTURE SETUP (Node Exporter)
-echo "Installing and configuring Node Exporter..."
-# Update apt lists and install the package automatically
-sudo apt-get update
-sudo apt-get install -y prometheus-node-exporter
+# INFRASTRUCTURE SETUP (Dockerized Node Exporter)
+echo "Spinning up Node Exporter container..."
 
-# Ensure the service is enabled to start on boot and is currently running
-sudo systemctl enable --now prometheus-node-exporter
+# stop and remove old container if it exists
+docker stop node-exporter 2>/dev/null || true
+docker rm node-exporter 2>/dev/null || true
 
-# Output the status for your assignment screenshot/logs
-echo "Node Exporter Status:"
-systemctl status prometheus-node-exporter --no-pager | head -n 10
+# run the node exporter container attached to the host
+docker run -d --name node-exporter --restart always --net="host" --pid="host" -v "/:/host:ro,rslave" prom/node-exporter --path.rootfs=/host
 
 # DEPLOY BACKEND
 

@@ -17,6 +17,8 @@ Backend (FastAPI Docs/API): http://paffenroth-23.dyn.wpi.edu:22092/docs
 
 Prometheus (Monitoring): http://paffenroth-23.dyn.wpi.edu:22094
 
+Prometheus infrastructure metrics (Monitoring): http://paffenroth-23.dyn.wpi.edu:22094/metrics
+
 
 ## Local Setup
 In frontend docker file 
