@@ -22,8 +22,8 @@ fi
 # build the frontend image from shrug-intelligence/ directory
 docker build -t cs3-frontend -f shrug-intelligence/Dockerfile shrug-intelligence/
 
-# run the container
-docker run -d --name cs3-frontend --restart always -p 22091:22091 cs3-frontend
+# run the container with host networking so ngrok can access it
+docker run -d --name cs3-frontend --restart always --net=host cs3-frontend
 
 echo "frontend container started"
 docker ps --filter name=cs3-frontend
