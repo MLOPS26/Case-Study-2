@@ -4,16 +4,21 @@ global:
     monitor: 'codelab-monitor'
 
 scrape_configs:
-  # 1. Scrape Prometheus itself
+  # Scrape Prometheus itself
   - job_name: 'prometheus'
     scrape_interval: 5s
     static_configs:
       # Prometheus runs natively on 9090 inside its container
       - targets: ['localhost:9090'] 
 
-  # 2. Scrape your FastAPI Backend
+  # Scrape your FastAPI Backend
   - job_name: 'cs3-backend'
     scrape_interval: 5s
     static_configs:
-      # Point this to your server and backend port
       - targets: ['paffenroth-23.dyn.wpi.edu:22092']
+
+  # Scrape the Node Exporter (Infrastructure Metrics)
+  - job_name: 'node-exporter'
+    scrape_interval: 15s
+    static_configs:
+      - targets: ['172.17.0.1:9100']
