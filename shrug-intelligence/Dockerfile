@@ -7,7 +7,7 @@ RUN bun install --frozen-lockfile
 
 COPY . ./
 
-ENV NEXT_PUBLIC_BACKEND_URL=http://paffenroth-23.dyn.wpi.edu:22092
+ENV NEXT_PUBLIC_BACKEND_URL=https://cerebrational-lyman-cavate.ngrok-free.dev
 RUN bun run build
 
 FROM oven/bun:latest

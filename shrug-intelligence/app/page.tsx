@@ -14,7 +14,7 @@ export default function Home() {
   const [view, setView] = useState<"main" | "history">("main");
   const [mode, setMode] = useState<"local" | "remote">("local");
 
-  const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+  const BACKEND_URL = "https://cerebrational-lyman-cavate.ngrok-free.dev";
 
   // Reset form
   const handleClear = () => {
