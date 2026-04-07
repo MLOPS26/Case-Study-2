@@ -1,0 +1,9 @@
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://paffenroth-23.dyn.wpi.edu:22094
+    isDefault: true
+    editable: true

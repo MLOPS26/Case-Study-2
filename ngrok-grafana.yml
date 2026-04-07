@@ -1,0 +1,6 @@
+version: "2"
+tunnels:
+  shrug-intelligence-grafana:
+    proto: http
+    addr: http://paffenroth-23.dyn.wpi.edu:22095
+    domain: https://lai-unreverberating-disgustingly.ngrok-free.dev
