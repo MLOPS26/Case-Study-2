@@ -1,0 +1,6 @@
+version: "2"
+tunnels:
+  shrug-intelligence-backend:
+    proto: http
+    addr: http://paffenroth-23.dyn.wpi.edu:22092
+    domain: cerebrational-lyman-cavate.ngrok-free.dev

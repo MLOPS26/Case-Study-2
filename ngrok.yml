@@ -1,0 +1,6 @@
+version: "2"
+tunnels:
+  shrug-intelligence:
+    proto: http
+    addr: http://paffenroth-23.dyn.wpi.edu:22091
+    domain: hedy-spriggier-shela.ngrok-free.dev
