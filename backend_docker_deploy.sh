@@ -63,8 +63,7 @@ source NGROK_AUTHTOKEN_BACKEND
 docker run -d --name ngrok --net=host --restart always -e NGROK_AUTHTOKEN="$NGROK_AUTHTOKEN" -v ~/Case-Study-2/ngrok.yml:/etc/ngrok.yml:ro ngrok/ngrok:latest start --all --config /etc/ngrok.yml
 
 
-docker run -d --name ngrok-backend --net=host --restart always -e NGROK_AUTHTOKEN="$NGROK_AUTHTOKEN_BACKEND" -v ~/Case-Study-2/ngrok-backend.yml:/etc/ngrok-backend.yml:ro ngrok/ngrok:latest start --all --config /etc/ngrok.yml
-
+docker run -d --name ngrok-backend --net=host --restart always -e NGROK_AUTHTOKEN="$NGROK_AUTHTOKEN_BACKEND" -v ~/Case-Study-2/ngrok-backend.yml:/etc/ngrok-backend.yml:ro ngrok/ngrok:latest start --all --config /etc/ngrok-backend.yml 
 
 echo "Ngrok containers started!"
 

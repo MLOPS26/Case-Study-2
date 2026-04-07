@@ -1,4 +1,5 @@
 version: "2"
+web_addr: 4041
 tunnels:
   shrug-intelligence-backend:
     proto: http
